@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Daily Task Manager by Hassan Bin Waqar">
+    <title>Interactive Task Manager</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(145deg, #ffffff, #ececec);
+            border-radius: 15px;
+            box-shadow: 10px 10px 20px #bebebe, -10px -10px 20px #ffffff;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2em;
+            color: #007bff;
+        }
+
+        #task-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        #task-form input,
+        #task-form button {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+
+        #task-form button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #task-form button:hover {
+            background-color: #218838;
+        }
+
+        #task-controls {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #searchTask {
+            padding: 12px;
+            width: 70%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-btn {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background-color: #0056b3;
+        }
+
+        .filter-btn:hover {
+            background-color: #0056b3;
+        }
+
+        #task-list {
+            margin-top: 20px;
+        }
+
+        #tasks {
+            list-style: none;
+            padding: 0;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .task-item:hover {
+            transform: scale(1.02);
+        }
+
+        .task-item.completed {
+            text-decoration: line-through;
+            background-color: #d4edda;
+        }
+
+        .task-actions button {
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-left: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .task-actions .edit-task {
+            background-color: #ffc107;
+            color: white;
+        }
+
+        .task-actions .edit-task:hover {
+            background-color: #e0a800;
+        }
+
+        .task-actions .delete-task {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .task-actions .delete-task:hover {
+            background-color: #c82333;
+        }
+
+        .task-actions .complete-task {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .task-actions .complete-task:hover {
+            background-color: #218838;
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            background-color: #333;
+            color: #f4f4f4;
+        }
+
+        body.dark-mode .container {
+            background-color: #444;
+        }
+
+        body.dark-mode .task-item {
+            background-color: #555;
+            border-color: #666;
+        }
+
+        body.dark-mode .task-item.completed {
+            background-color: #454d45;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            border-top: 1px solid #0056b3;
+            border-radius: 0 0 15px 15px;
+        }
+           /* Responsive Styles */
+           @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 15px;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            #task-form {
+                flex-direction: column;
+            }
+
+            #task-controls {
+                flex-direction: column;
+            }
+
+            .filter-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .task-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .task-actions {
+                justify-content: flex-start;
+            }
+
+            footer {
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.2em;
+            }
+
+            .filter-btn {
+                padding: 10px;
+            }
+
+            .task-item {
+                padding: 10px;
+            }
+
+            .task-actions button {
+                padding: 6px;
+                margin-top: 5px;
+            }
+
+            footer {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Task Manager</h1>
+            <div class="theme-toggle">
+                <label>
+                    <input type="checkbox" id="themeSwitch"> Dark Mode
+                </label>
+            </div>
+        </header>
+
+        <section id="task-form">
+            <input type="text" id="taskName" placeholder="Task Name">
+            <input type="text" id="taskDescription" placeholder="Task Description">
+            <input type="date" id="taskDueDate">
+            <button id="addTaskBtn">Add Task</button>
+        </section>
+
+        <section id="task-controls">
+            <input type="text" id="searchTask" placeholder="Search Tasks">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="pending">Pending</button>
+                <button class="filter-btn" data-filter="completed">Completed</button>
+            </div>
+        </section>
+
+        <section id="task-list">
+            <ul id="tasks"></ul>
+        </section>
+
+        <footer>
+            <span>Hassan Bin Waqar || Bytewise Frontend Dev Track</span>
+        </footer>
+    </div>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Toggle Dark Mode
+            $('#themeSwitch').change(function() {
+                $('body').toggleClass('dark-mode');
+            });
+
+            // Add Task
+            $('#addTaskBtn').click(function() {
+                let taskName = $('#taskName').val().trim();
+                let taskDescription = $('#taskDescription').val().trim();
+                let taskDueDate = $('#taskDueDate').val();
+
+                if (taskName === '') {
+                    alert('Please enter a task name.');
+                    return;
+                }
+
+                let taskItem = `
+                    <li class="task-item" data-status="pending">
+                        <span class="task-details">
+                            <strong>${taskName}</strong><br>
+                            ${taskDescription}<br>
+                            Due: ${taskDueDate}
+                        </span>
+                        <div class="task-actions">
+                            <button class="edit-task">Edit</button>
+                            <button class="delete-task">Delete</button>
+                            <button class="complete-task">Complete</button>
+                        </div>
+                    </li>
+                `;
+
+                $('#tasks').append(taskItem);
+
+                // Clear the form
+                $('#taskName').val('');
+                $('#taskDescription').val('');
+                $('#taskDueDate').val('');
+
+                // Animate task addition
+                $('#tasks li:last-child').hide().slideDown(300);
+            });
+
+            // Delete Task
+            $(document).on('click', '.delete-task', function() {
+                $(this).closest('.task-item').slideUp(300, function() {
+                    $(this).remove();
+                });
+            });
+
+            // Mark Task as Complete
+            $(document).on('click', '.complete-task', function() {
+                let taskItem = $(this).closest('.task-item');
+                taskItem.toggleClass('completed');
+                taskItem.attr('data-status', taskItem.hasClass('completed') ? 'completed' : 'pending');
+            });
+
+            // Edit Task
+            $(document).on('click', '.edit-task', function() {
+                let taskItem = $(this).closest('.task-item');
+                let taskDetails = taskItem.find('.task-details');
+
+                let taskName = prompt('Edit Task Name:', taskDetails.find('strong').text());
+                if (taskName === null) return;
+
+                let taskDescription = prompt('Edit Task Description:', taskDetails.contents().filter(function() {
+                    return this.nodeType === 3;
+                }).text().trim());
+
+                taskDetails.find('strong').text(taskName);
+                taskDetails.contents().filter(function() {
+                    return this.nodeType === 3;
+                }).text(` ${taskDescription} `);
+            });
+
+                       // Filter Tasks
+                       $('.filter-btn').click(function() {
+                let filter = $(this).data('filter');
+
+                $('.filter-btn').removeClass('active');
+                $(this).addClass('active');
+
+                $('#tasks .task-item').each(function() {
+                    let status = $(this).data('status');
+                    if (filter === 'all' || filter === status) {
+                        $(this).slideDown(300);
+                    } else {
+                        $(this).slideUp(300);
+                    }
+                });
+            });
+
+            // Search Tasks
+            $('#searchTask').keyup(function() {
+                let searchText = $(this).val().toLowerCase();
+                $('#tasks .task-item').each(function() {
+                    let taskName = $(this).find('.task-details strong').text().toLowerCase();
+                    let taskDescription = $(this).find('.task-details').contents().filter(function() {
+                        return this.nodeType === 3;
+                    }).text().toLowerCase();
+
+                    if (taskName.includes(searchText) || taskDescription.includes(searchText)) {
+                        $(this).slideDown(300);
+                    } else {
+                        $(this).slideUp(300);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
+           
